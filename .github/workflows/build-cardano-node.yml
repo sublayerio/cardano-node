@@ -17,7 +17,7 @@ jobs:
           echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
           echo ::set-output name=releaseDate::$(date -u +"%FT%T.000Z")
       - name: Build the Docker image
-        working-directory: ./services/passport-api
+        working-directory: ./
         run: docker build . --file Dockerfile --tag sublayer/cardano-node:${{ steps.vars.outputs.tag }}
       - name: Login into Gitlab Docker Registry
         run: docker login -u sublayer -p ${{ secrets.DOCKER_PASSWORD }}
