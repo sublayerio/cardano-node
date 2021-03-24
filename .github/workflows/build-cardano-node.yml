@@ -6,7 +6,7 @@ on:
       - created
 
 jobs:
-  build-passport-api:
+  build-cardano-node:
     runs-on: ubuntu-latest
 
     steps:
