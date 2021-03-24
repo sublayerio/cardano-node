@@ -57,12 +57,9 @@ RUN rm ghc-8.10.2-x86_64-deb9-linux.tar.xz
 RUN cd ghc-8.10.2 && ./configure && make install
 
 # Update PATH to include Cabal and GHC and add exports. Your node's location will be in $NODE_HOME. 
-# The cluster configuration is set by $NODE_CONFIG and $NODE_BUILD_NUM. 
 ENV HOME=/root
 ENV PATH="/root/.local/bin:$PATH"
 ENV NODE_HOME=$HOME/cardano-my-node
-ENV NODE_CONFIG=testnet
-ENV NODE_BUILD_NUM=5821110
 ENV LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
 
 # Update cabal and verify the correct versions were installed successfully.
@@ -99,25 +96,6 @@ RUN cp $(find /tmp/cardano-node/dist-newstyle/build -type f -name "cardano-node"
 
 RUN cardano-node version
 RUN cardano-cli version
-
-RUN mkdir $NODE_HOME
-WORKDIR $NODE_HOME
-
-RUN wget -N https://hydra.iohk.io/build/${NODE_BUILD_NUM}/download/1/${NODE_CONFIG}-byron-genesis.json
-RUN wget -N https://hydra.iohk.io/build/${NODE_BUILD_NUM}/download/1/${NODE_CONFIG}-topology.json
-RUN wget -N https://hydra.iohk.io/build/${NODE_BUILD_NUM}/download/1/${NODE_CONFIG}-shelley-genesis.json
-RUN wget -N https://hydra.iohk.io/build/${NODE_BUILD_NUM}/download/1/${NODE_CONFIG}-config.json
-
-
-# Run the following to modify testnet-config.json and 
-# update TraceBlockFetchDecisions to "true"
-RUN sed -i ${NODE_CONFIG}-config.json \
-    -e "s/TraceBlockFetchDecisions\": false/TraceBlockFetchDecisions\": true/g"
-
-ENV CARDANO_NODE_SOCKET_PATH="$NODE_HOME/db/socket"
-
-COPY start.sh $NODE_HOME/start.sh
-RUN chmod 755 $NODE_HOME/start.sh
 
 # Install gLiveView, a monitoring tool.
 WORKDIR $NODE_HOME
